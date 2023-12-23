@@ -1,0 +1,26 @@
+{
+  "name": "moonlight-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node lib/main",
+    "watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.10.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@fastify/swagger": "^8.12.0",
+    "@fastify/swagger-ui": "^1.10.2",
+    "@napi-rs/canvas": "^0.1.44",
+    "fastify": "^4.24.3",
+    "fastify-type-provider-zod": "^1.1.9",
+    "tslib": "^2.6.2"
+  }
+}
