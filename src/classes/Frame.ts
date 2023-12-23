@@ -149,6 +149,9 @@ class Frame {
                 this.ctx.fillText(txtline, textanchor, txtY)
                 txtY += charHeight
             })
+        } else {
+            this.ctx.textAlign = options.align || "left"
+            this.ctx.fillText(text, x, y)
         }
     }
 
