@@ -22,6 +22,7 @@
     "@napi-rs/canvas": "^0.1.44",
     "fastify": "^4.24.3",
     "fastify-type-provider-zod": "^1.1.9",
-    "tslib": "^2.6.2"
+    "tslib": "^2.6.2",
+    "zod": "^3.22.4"
   }
 }
