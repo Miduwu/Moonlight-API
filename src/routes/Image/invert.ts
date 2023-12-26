@@ -3,13 +3,13 @@ import z from "zod";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
-        path: "/image/grayscale",
+        path: "/image/invert",
         method: "GET"
     })
     @Endpoint.Query({
         image: z.string({ description: "The image to draw" }).url()
     })
-    @Endpoint.Describe("Apply a grayscale filter to your image.")
+    @Endpoint.Describe("Apply an invert filter to your image.")
     @Endpoint.Tags("Image")
     async handler(ctx: Context) {
         const img = new Frame(1024, 1024)
@@ -17,7 +17,7 @@ export class Route extends Endpoint {
         const avatar = await Frame.loadImage(ctx.getParam("image")).catch(aux.noop)
         if(!avatar) return Endpoint.Error("Invalid image provided in: " + ctx.param.name)
 
-        img.ctx.filter = "grayscale(100%)"
+        img.ctx.filter = "invert(100%)"
         img.drawImage(avatar, 0, 0, 1024, 1024)
         img.ctx.filter = "none"
 
