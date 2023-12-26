@@ -17,6 +17,9 @@ export class Route extends Endpoint {
             query: string = ctx.getParam("query"),
             limit = Number(ctx.getParam("limit")) ?? 10
 
+        if (!["anime", "manga"].includes(type.toLowerCase()))
+            return Endpoint.Error("Invalid search type provided")
+
         const URL = `https://kitsu.io/api/edge/${type}?filter[text]=${query}&page[offset]=0`
         const request = await fetch(URL)
 
