@@ -6,11 +6,12 @@ export class Route extends Endpoint {
         path: "/image/grayscale",
         method: "GET"
     })
-    @Endpoint.Query({
-        image: z.string({ description: "The image to draw" }).url()
+    @Endpoint.Query("image", {
+        description: "The image to draw",
+        required: true,
+        type: aux.STRING({ essential: aux.Essentials.Image })
     })
     @Endpoint.Describe("Apply a grayscale filter to your image.")
-    @Endpoint.Tags("Image")
     async handler(ctx: Context) {
         const img = new Frame(1024, 1024)
 

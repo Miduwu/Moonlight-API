@@ -10,7 +10,6 @@ export class Route extends Endpoint {
         required: true,
         type: aux.STRING({ min: 1, max: 1000 })
     })
-
     async handler(ctx: Context) {
         ctx.send({
             "text": ctx.getParam("text"),
