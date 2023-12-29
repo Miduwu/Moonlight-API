@@ -1,22 +1,22 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
         path: "/json/npm",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        query: z.string({ description: "The package name (exact match)" }),
+    @Endpoint.Query("query", {
+        description: "The package name (exact match)",
+        required: true,
+        type: aux.STRING({ min: 2, max: 100 })
     })
     async handler(ctx: Context) {
         const query: string = ctx.getParam("query")
 
-        if (!query) return Endpoint.Error("Missing required parameter 'query'")
+        if (!query) throw Endpoint.Error("Missing required parameter 'query'")
         
         const request = await fetch(`https://registry.npmjs.org/${query.toLowerCase().replaceAll(' ', '-')}`)
-        if (!request.ok) return Endpoint.Error("Cannot get a valid response.")
+        if (!request.ok) throw Endpoint.Error("Cannot get a valid response.")
 
         const data = await request.json() as NPMData
 

@@ -1,21 +1,29 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
         path: "/json/anime",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        type: z.string({ description: "The type of search" }),
-        query: z.string({ description: "The anime/manga title to search" }),
-        limit: z.string({ description: "The limit of results to show" })
+    @Endpoint.Query("type", {
+        description: "The type of search",
+        default: "anime",
+        type: aux.LITERAL("anime", "manga")
+    })
+    @Endpoint.Query("query", {
+        description: "What to search for",
+        required: true,
+        type: aux.STRING({ max: 1000, min: 1 })
+    })
+    @Endpoint.Query("limit", {
+        description: "How many results should be returned? (Maximum is 10)",
+        default: 10,
+        type: aux.NUMBER({ min: 1, max: 10 })
     })
     async handler(ctx: Context) {
         const type: string = ctx.getParam("type"),
             query: string = ctx.getParam("query"),
-            limit = Number(ctx.getParam("limit")) ?? 10
+            limit = ctx.getParam<number>("limit")
 
         if (!["anime", "manga"].includes(type.toLowerCase()))
             return Endpoint.Error("Invalid search type provided")
@@ -23,7 +31,7 @@ export class Route extends Endpoint {
         const URL = `https://kitsu.io/api/edge/${type}?filter[text]=${query}&page[offset]=0`
         const request = await fetch(URL)
 
-        if (!request.ok) return Endpoint.Error("Cannot get a valid response.")
+        if (!request.ok) throw Endpoint.Error("Cannot get a valid response.")
 
         const data = await request.json()
         

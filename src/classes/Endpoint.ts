@@ -1,25 +1,27 @@
 import * as F from "fastify";
-import { z as T } from "zod";
+import { NumberOptions, StringOptions } from "./Parser";
 
 export interface EndpointOptions {
     method: F.HTTPMethods
     path: string
     schema?: F.FastifySchema
+    query?: Record<string, QueryOptions>
 }
 
-const JSONResponse = {
-    "statusCode": T.number(),
-    "data": T.any(),
-    "success": T.boolean()
+export type TYPES = "STRING" | "LITERAL" | "BOOLEAN" | "NUMBER"
+export type ParamOptions = { schema: TYPES, options?: StringOptions | NumberOptions | string[] | number[] }
+
+export interface QueryOptions {
+    description?: string
+    required?: boolean
+    default?: any
+    type: ParamOptions
 }
 
-const ImageResponse = T.any()
-
-const LeftResponses: Record<number, typeof JSONResponse> = {
-    400: JSONResponse,
-    405: JSONResponse,
-    500: JSONResponse,
-    422: JSONResponse,
+export class APIError extends Error {
+    constructor(message: string, options?: Record<string, any>) {
+        super(message, options)
+    }
 }
 
 export class Endpoint {
@@ -35,27 +37,11 @@ export class Endpoint {
         }
     }
 
-    static Query(params: Record<string, any>) {
+    static Query(name: string, options: QueryOptions) {
         return function(target: any, key: string, descriptor: PropertyDescriptor) {
             if(!descriptor.value.options) descriptor.value.options = {}
-            if(!descriptor.value.options.schema) descriptor.value!.options.schema = {}
-            descriptor.value.options.schema.querystring = T.object(params)
-        }
-    }
-
-    static Tags(...tags: string[]) {
-        return function(target: any, key: string, descriptor: PropertyDescriptor) {
-            if(!descriptor.value.options) descriptor.value.options = {}
-            if(!descriptor.value.options.schema) descriptor.value!.options.schema = {}
-            descriptor.value.options.schema.tags = [...tags]
-        }
-    }
-
-    static Body(params: Record<string, any>) {
-        return function(target: any, key: string, descriptor: PropertyDescriptor) {
-            if(!descriptor.value.options) descriptor.value.options = {}
-            if(!descriptor.value.options.schema) descriptor.value!.options.schema = {}
-            descriptor.value.options.schema.body = T.object(params)
+            if(!descriptor.value.options.query) descriptor.value!.options.query = {}
+            descriptor.value.options.query[name] = options
         }
     }
 
@@ -67,8 +53,8 @@ export class Endpoint {
         }
     }
 
-    static Error(...args: string[]) {
-        return F.errorCodes.FST_ERR_VALIDATION(...args)
+    static Error(message: string, options?: any) {
+        return new APIError(message, options)
     }
 
     assign() {

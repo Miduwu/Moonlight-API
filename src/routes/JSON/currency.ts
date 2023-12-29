@@ -1,5 +1,4 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 export const CODES = {
     "AFN": "Afghan Afghani",
@@ -169,19 +168,28 @@ export class Route extends Endpoint {
         path: "/json/currency",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        amount: z.string({ description: "The amount of money to convert" }),
-        source: z.string({ description: "The source currency code" }),
-        target: z.string({ description: "The target currency code" })
+    @Endpoint.Query("amount", {
+        description: "The amount of money to convert",
+        required: true,
+        type: aux.NUMBER()
+    })
+    @Endpoint.Query("source", {
+        description: "The source currency code",
+        required: true,
+        type: aux.STRING({ isIn: Object.keys(CODES) })
+    })
+    @Endpoint.Query("target", {
+        description: "The target currency code",
+        required: true,
+        type: aux.STRING({ isIn: Object.keys(CODES) })
     })
     async handler(ctx: Context) {
         const source: string = ctx.getParam("source"),
             target: string = ctx.getParam("target"),
             amount: string = ctx.getParam("amount")
-        
+
         if (!(source in CODES) || !(target in CODES))
-            return Endpoint.Error("Invalid currency code provided")
+            throw Endpoint.Error("Invalid currency code provided")
         
         const request = await fetch(`https://www.google.com/search?q=convert+${amount}+${source}+to+${target}&hl=en&lr=lang_en`)
         const bodyText = await request.text()
@@ -192,8 +200,7 @@ export class Route extends Endpoint {
         const base = bodyText.match(baseRegex), converted = bodyText.match(convertedRegex)
 
         if (!base?.length || !converted?.length)
-            return Endpoint.Error("I was unable to convert that money")
-
+            throw Endpoint.Error("I was unable to convert that money")
         ctx.send({
             "source": {
                 "code": source.toUpperCase(),

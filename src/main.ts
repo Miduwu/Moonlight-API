@@ -1,12 +1,10 @@
-import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 import fastify from "fastify";
 import { Auxiliar } from "./classes/Auxiliar";
 
-const server = fastify().setValidatorCompiler(validatorCompiler).setSerializerCompiler(serializerCompiler)
+const server = fastify()
 const aux = new Auxiliar(server)
 
 aux.setErrorHandlers()
-aux.setSwagger()
 aux.loadImages()
 
 server.register(require("./routes/main"))

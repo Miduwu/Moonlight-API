@@ -1,26 +1,31 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
         path: "/json/github",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        query: z.string({ description: "The query to search in GitHub." }),
-        type: z.string({ description: "Type of data to be search." })
+    @Endpoint.Query("query", {
+        description: "The query to use for the GitHub API.",
+        required: true,
+        type: aux.STRING({ min: 1, max: 100 })
+    })
+    @Endpoint.Query("type", {
+        description: "What type of data should be returned",
+        default: "repo",
+        type: aux.LITERAL("user", "repo")
     })
     async handler(ctx: Context) {
+        console.log(2)
         const type: string = ctx.getParam("type", "repo"), query: string = ctx.getParam("query")
-        if (type === "url") {
+        if (type === "user") {
             const result = await fetch(`https://api.github.com/users/${query}`)
-            if (!result.ok) return Endpoint.Error("Cannot get a valid response.")
+            if (!result.ok) throw Endpoint.Error("Cannot get a valid response.")
             else ctx.send(await result.json())
         } else {
             const result = await fetch(`https://api.github.com/search/repositories?q=${query}&page=1&per_page=1`)
-            if (!result.ok) return Endpoint.Error("Cannot get a valid response.")
-            else if ((await result.json()).total_count === "0") return Endpoint.Error("400", "No results found.")
+            if (!result.ok) throw Endpoint.Error("Cannot get a valid response.")
+            else if ((await result.json()).total_count === "0") throw Endpoint.Error("400", "No results found.")
             else ctx.send(await result.json())
         }
     }
