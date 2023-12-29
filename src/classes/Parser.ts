@@ -12,7 +12,7 @@ export enum StringEssentials { Link, Image, Color }
  * @param hex - The string to be tested.
  * @returns {boolean}
  */
-function isHex(hex: string) {
+export function isHex(hex: string) {
     const regex = /#?([A-F0-9]{3}|[[A-F0-9]{6}])/ig
     return regex.test(hex)
 }

@@ -42,3 +42,27 @@ export const getFunctionSource = (func: CompiledFunction) => `{${func.name} => $
  * @returns {string}
  */
 export const getFunctionError = (message: string, func: CompiledFunction) => `${message} in: "${func.name}"`
+
+/**
+ * Represents the name of the error message.
+ */
+export const ERROR_NAME = "$$__core__error__$$";
+
+/**
+ * Represents the name of the canvas.
+ */
+export const FRAME_NAME = "$$__core__canva__$$";
+
+/**
+ * Throws a function error.
+ */
+export class FunctionError {
+    /**
+     * @param data - Interpreter data.
+     * @param message - Error message.
+     */
+    constructor(data: Data, message: string) {
+        data.break = true
+        data.ctx.send({ message }, { status: 400, success: false })
+    }
+}

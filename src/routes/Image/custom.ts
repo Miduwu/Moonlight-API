@@ -1,7 +1,6 @@
-import { Data, FunctionManager, Interpreter } from "../../classes/core/index"
+import { Data, FunctionManager, FRAME_NAME, Interpreter } from "../../classes/core/index"
 import { Context, Endpoint, Frame, aux } from "../../main"
 
-const FRAME_NAME = "$$__core__canvas__$$"
 const FUNCTIONS = new FunctionManager;
 FUNCTIONS.load()
 
@@ -20,8 +19,8 @@ export class Route extends Endpoint {
         })
 
         const d = await data.interpreter.parse(body.code, data)
-
-        if (!(FRAME_NAME in data.cache) || !(data.cache[FRAME_NAME] instanceof Frame))
+        
+        if (!(data.cache[FRAME_NAME] instanceof Frame))
             return Endpoint.Error("Missing canvas to be sent!")
 
         ctx.send(data.cache[FRAME_NAME].toBuffer(), { type: "image/png" })

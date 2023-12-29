@@ -1,6 +1,6 @@
 import * as F from "fastify";
 
-export type ContextSendOptions = { status?: number, type?: string }
+export type ContextSendOptions = { status?: number, type?: string, success?: boolean }
 export type Param = { name?: string, value?: any }
 
 export class Context {
@@ -20,7 +20,7 @@ export class Context {
 
     send(payload: unknown, options?: ContextSendOptions) {
         let type = options?.type || "application/json"
-        if(type == "application/json") return this.res.type(type).status(options?.status || 200).send({ statusCode: options?.status || 200, data: payload, success: true })
+        if(type == "application/json") return this.res.type(type).status(options?.status || 200).send({ statusCode: options?.status || 200, data: payload, success: options?.success ?? true })
         else return this.res.type(type).status(options?.status || 200).send(payload)
     }
 

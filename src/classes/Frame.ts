@@ -185,7 +185,7 @@ class Frame {
     }
 
     getMetrics(text: string) {
-        this.ctx.measureText(text)
+        return this.ctx.measureText(text)
     }
 
     setRotation(angle: number) {

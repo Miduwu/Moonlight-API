@@ -1,7 +1,7 @@
 import { FunctionManager, Interpreter, NativeFunction } from './index.js'
 import { CompiledFunction } from './CompiledFunction.js'
-import { ConditionParser } from './ConditionParser.js'
 import { CompiledString } from './CompiledString.js'
+import { Condition } from './Condition.js'
 import { Context } from '../Context.js'
 
 type DataOptions = {
@@ -37,7 +37,7 @@ export class Data {
         specification: NativeFunction
     }
     start? = Date.now()
-    condition = ConditionParser
+    condition = Condition
     cache: Record<string, any>
     constructor(options: DataOptions) {
         this.break = options.break ?? false
