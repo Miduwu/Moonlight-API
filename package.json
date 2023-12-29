@@ -6,13 +6,14 @@
   "scripts": {
     "start": "node lib/main",
     "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "funcs": "node lib/classes/core/generators/FunctionDocumentation"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.10.2",
+    "ascii-table3": "^0.9.0",
     "miduco": "^1.0.2",
     "typescript": "^5.2.2"
   },

@@ -1,5 +1,4 @@
 import { Context, Endpoint, Frame, aux } from "../../main";
-import z from "zod";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
