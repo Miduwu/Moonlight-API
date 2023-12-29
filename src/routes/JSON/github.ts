@@ -16,7 +16,6 @@ export class Route extends Endpoint {
         type: aux.LITERAL("user", "repo")
     })
     async handler(ctx: Context) {
-        console.log(2)
         const type: string = ctx.getParam("type", "repo"), query: string = ctx.getParam("query")
         if (type === "user") {
             const result = await fetch(`https://api.github.com/users/${query}`)

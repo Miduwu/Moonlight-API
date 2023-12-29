@@ -13,7 +13,6 @@ export default (fastify: F.FastifyInstance, ops: unknown, done: F.DoneFuncWithEr
             const CLS: typeof Endpoint | undefined = require(join(process.cwd(), `/lib/routes/${folder}/${file}`))?.Route
             if(!CLS) return
             const route = new CLS().assign()
-            console.log(10)
             fastify.route({
                 url: route.options!.path,
                 method: route.options!.method,
@@ -21,7 +20,6 @@ export default (fastify: F.FastifyInstance, ops: unknown, done: F.DoneFuncWithEr
                 // @ts-ignore
                 handler: async(req, res) => await route.handler!(new Context(req, res)),
                 preHandler: async (req, res, donePre) => {
-                    console.log(0)
                     if(route.options?.query) {
                         for(const key of Object.keys(route.options.query)) {
                             let v = (req.query as Record<string, string>)[key]
@@ -36,7 +34,6 @@ export default (fastify: F.FastifyInstance, ops: unknown, done: F.DoneFuncWithEr
                             (req.query as Record<string, any>)[key] = parsed
                         }
                     }
-                    console.log(1)
                     donePre()
                 }
             })
