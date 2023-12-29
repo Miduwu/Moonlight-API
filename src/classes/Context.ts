@@ -12,7 +12,7 @@ export class Context {
         this.res = res
     }
 
-    getParam(param: string, defaultValue: any = null) {
+    getParam<R = string>(param: string, defaultValue: any = null): R {
         let v = (this.req.query as Record<string, string>)[param] || defaultValue
         this.param = { name: param, value: v }
         return v

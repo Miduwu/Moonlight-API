@@ -1,5 +1,4 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 const RESPONSES = {
     en: ["Yes.", "No.", "Maybe.", "Probably.", "Probably no.", "I don't know.", "Sure.", "Obviously no.", "I doubt it."],
@@ -13,17 +12,21 @@ export class Route extends Endpoint {
         path: "/json/8ball",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        text: z.string({ description: "The question to do to the magic ball." }),
-        idiom: z.string({ description: "The idiom for the response" })
+    @Endpoint.Query("text", {
+        description: "The text to ask to the magic ball",
+        type: aux.STRING(),
+        required: true
+    })
+    @Endpoint.Query("idiom", {
+        description: "The idiom",
+        type: aux.LITERAL("en", "es", "pt", "fr")
     })
     async handler(ctx: Context) {
         const text: string = ctx.getParam("text"), idiom: string = ctx.getParam("idiom")
 
-        if (!text) return Endpoint.Error("Missing required parameter 'text'")
+        if (!text) throw Endpoint.Error("Missing required parameter 'text'")
         if (!(idiom.toLowerCase() in RESPONSES))
-            return Endpoint.Error("Invalid idiom provided.")
+            throw Endpoint.Error("Invalid idiom provided.")
 
         ctx.send({
             "question": text,

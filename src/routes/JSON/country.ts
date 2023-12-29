@@ -1,14 +1,14 @@
-import { Context, Endpoint } from "../../main";
-import z from "zod";
+import { Context, Endpoint, aux } from "../../main";
 
 export class Route extends Endpoint {
     @Endpoint.Create({
         path: "/json/country",
         method: "GET"
     })
-    @Endpoint.Tags("JSON")
-    @Endpoint.Query({
-        query: z.string({ description: "The country exact name." }),
+    @Endpoint.Query("query", {
+        description: "The country (exact name)",
+        required: true,
+        type: aux.STRING({ min: 1, max: 250 })
     })
     async handler(ctx: Context) {
         const name: string = ctx.getParam("query")
