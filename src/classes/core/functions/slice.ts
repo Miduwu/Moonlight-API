@@ -32,5 +32,5 @@ export default new NativeFunction({
     }
 })
 .setExample(`
-{lowercase => HELLO WORLD}
+{slice => HELLO WORLD:0:5}
 `)
